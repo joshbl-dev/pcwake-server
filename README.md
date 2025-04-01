@@ -32,11 +32,11 @@ pcwake-server
 
 ## Pre-requisites
 
-- NVM
 - Node.js
 - Yarn
 - Etherwake
 - Git
+- Cloudflared (optional)
 
 ## Systemd Service
 
@@ -64,6 +64,9 @@ RestartSec=10
 [Install]
 WantedBy=multi-user.target
 ```
+```bash
+sudo systemctl enable pcwake-server.service
+```
 
 Interact with the service with
 `sudo systemctl <status/start/stop/restart> pcwake-server.service`
@@ -78,6 +81,41 @@ $ yarn
 ## Running the app
 
 ```bash
-# production mode
-$ sudo yarn start:rasp
+sudo systemctl start pcwake-server.service
 ```
+
+## Cloudflared tunnel
+
+Cloudflared tunnel is a secure approach to sending your http requests to your server.
+
+To setup a tunnel follow these directions: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/create-remote-tunnel/
+
+For tunnel service choose `Type: HTTP` and `URL: localhost:<port>`
+
+```bash
+sudo nano /etc/systemd/system/cloudflared.service
+```
+```
+[Unit]
+Description=cloudflared
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+TimeoutStartSec=0
+Type=notify
+ExecStart=screen -S tunnel -D -m /usr/local/bin/cloudflared --no-autoupdate tunnel run --token <token>
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+```
+```bash
+sudo systemctl enable cloudflared.service
+```
+```bash
+sudo systemctl start cloudflared.service
+```
+
+You can further secure your tunnel by configuring your cloudflared rules to only accept requests from systems on your WARP network.
