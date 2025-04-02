@@ -12,7 +12,7 @@ export class Config {
     this.nodeEnv = process.env.NODE_ENV;
     this.baseUrl = process.env.BASE_URL;
     this.jwtSecret = process.env.JWT_SECRET;
-    this.etherwakeMac = process.env.ALIENWARE_MAC;
+    this.etherwakeMac = process.env.ETHERWAKE_ADDRESS;
     this.admin = process.env.ADMIN;
   }
 }
