@@ -32,9 +32,9 @@ pcwake-server
 
 ## Pre-requisites
 
-- Node.js
-- Yarn
-- Etherwake
+- Node.js (Installed as root)
+- Yarn (Installed as root)
+- Etherwake (Installed as root)
 - Git
 - Cloudflared (optional)
 
@@ -69,7 +69,7 @@ sudo systemctl enable pcwake-server.service
 ```
 
 Interact with the service with
-`sudo systemctl <status/start/stop/restart> pcwake-server.service`
+`sudo systemctl <status/start/stop/restart/enable> pcwake-server.service`
 View the logs with `sudo journalctl -u pcwake-server.service -f`
 
 ## Installation
@@ -92,30 +92,9 @@ To setup a tunnel follow these directions: https://developers.cloudflare.com/clo
 
 For tunnel service choose `Type: HTTP` and `URL: localhost:<port>`
 
-```bash
-sudo nano /etc/systemd/system/cloudflared.service
-```
-```
-[Unit]
-Description=cloudflared
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-TimeoutStartSec=0
-Type=notify
-ExecStart=screen -S tunnel -D -m /usr/local/bin/cloudflared --no-autoupdate tunnel run --token <token>
-Restart=on-failure
-RestartSec=5s
-
-[Install]
-WantedBy=multi-user.target
-```
-```bash
-sudo systemctl enable cloudflared.service
-```
-```bash
-sudo systemctl start cloudflared.service
-```
+More useful cloudflared commands:
+Interact with the service with
+`sudo systemctl <status/start/stop/restart/enable> cloudflared.service`
+View the logs with `sudo journalctl -u cloudflared.service -f`
 
 You can further secure your tunnel by configuring your cloudflared rules to only accept requests from systems on your WARP network.
